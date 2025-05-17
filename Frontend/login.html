@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login / Register - Voting System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #4a6bff;
+      --secondary-color: #6c757d;
+      --success-color: #28a745;
+      --error-color: #dc3545;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, rgba(74,107,255,0.8), rgba(108,117,125,0.8)), url("Frontend/photo2.jpg") no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--dark-color);
+    }
+
+    .container {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 12px;
+      width: 380px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+    }
+
+    .container:hover {
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      top: 38px;
+      color: var(--secondary-color);
+    }
+
+    input {
+      width: 80%;
+      padding: 12px 12px 12px 38px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(74,107,255,0.2);
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 0.5rem;
+    }
+
+    button:hover {
+      background-color: #3a5bef;
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .switch {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--secondary-color);
+    }
+
+    .switch a {
+      color: var(--primary-color);
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .switch a:hover {
+      text-decoration: underline;
+    }
+
+    .form {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .form.active {
+      display: block;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 38px;
+      cursor: pointer;
+      color: var(--secondary-color);
+    }
+
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .alert-success {
+      background-color: rgba(40,167,69,0.1);
+      color: var(--success-color);
+      border: 1px solid rgba(40,167,69,0.3);
+    }
+
+    .alert-error {
+      background-color: rgba(220,53,69,0.1);
+      color: var(--error-color);
+      border: 1px solid rgba(220,53,69,0.3);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .logo img {
+      height: 50px;
+    }
+
+    .logo h1 {
+      margin: 0.5rem 0 0;
+      color: var(--primary-color);
+      font-size: 1.5rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        width: 90%;
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">
+    <img src="/Frontend/photo.jpg" alt="Voting System Logo">
+    <h1>Voting System</h1>
+  </div>
+
+  <div id="loginForm" class="form active">
+    <div id="loginAlert" class="alert"></div>
+    <h2>Login to Your Account</h2>
+    
+    <div class="form-group">
+      <label for="loginUsername">Username</label>
+      <i class="fas fa-user input-icon"></i>
+      <input type="text" id="loginUsername" placeholder="Enter your username" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="loginPassword">Password</label>
+      <i class="fas fa-lock input-icon"></i>
+      <input type="password" id="loginPassword" placeholder="Enter your password" required>
+   
+    </div>
+    
+    <button onclick="login()">
+      <i class="fas fa-sign-in-alt"></i> Login
+    </button>
+    
+    <div class="switch">
+      Don't have an account? <a onclick="switchForm('register')">Register here</a>
+    </div>
+  </div>
+
+  <div id="registerForm" class="form">
+    <div id="registerAlert" class="alert"></div>
+    <h2>Create New Account</h2>
+    
+    <div class="form-group">
+      <label for="regUsername">Username</label>
+      <i class="fas fa-user input-icon"></i>
+      <input type="text" id="regUsername" placeholder="Choose a username" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="regPassword">Password</label>
+      <i class="fas fa-lock input-icon"></i>
+      <input type="password" id="regPassword" placeholder="Create a password" required>
+      <i class="fas fa-eye password-toggle" onclick="togglePassword('regPassword', this)"></i>
+    </div>
+    
+    <div class="form-group">
+      <label for="regConfirmPassword">Confirm Password</label>
+      <i class="fas fa-lock input-icon"></i>
+      <input type="password" id="regConfirmPassword" placeholder="Confirm your password" required>
+      <i class="fas fa-eye password-toggle" onclick="togglePassword('regConfirmPassword', this)"></i>
+    </div>
+    
+    <button onclick="register()">
+      <i class="fas fa-user-plus"></i> Register
+    </button>
+    
+    <div class="switch">
+      Already have an account? <a onclick="switchForm('login')">Login here</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Switch between login and register forms
+  function switchForm(form) {
+    document.getElementById("loginForm").classList.remove("active");
+    document.getElementById("registerForm").classList.remove("active");
+    document.getElementById(form + "Form").classList.add("active");
+    
+    // Clear alerts when switching forms
+    document.getElementById("loginAlert").style.display = "none";
+    document.getElementById("registerAlert").style.display = "none";
+  }
+
+  // Toggle password visibility
+  function togglePassword(inputId, icon) {
+    const input = document.getElementById(inputId);
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+      input.type = "password";
+      icon.classList.replace("fa-eye-slash", "fa-eye");
+    }
+  }
+
+  // Show alert message
+  function showAlert(elementId, message, type) {
+    const alertElement = document.getElementById(elementId);
+    alertElement.textContent = message;
+    alertElement.className = `alert alert-${type}`;
+    alertElement.style.display = "block";
+    
+    // Hide alert after 5 seconds
+    setTimeout(() => {
+      alertElement.style.display = "none";
+    }, 5000);
+  }
+
+  // Register new user
+  function register() {
+    const username = document.getElementById("regUsername").value.trim();
+    const password = document.getElementById("regPassword").value;
+    const confirmPassword = document.getElementById("regConfirmPassword").value;
+    
+    // Validate inputs
+    if (!username || !password || !confirmPassword) {
+      return showAlert("registerAlert", "Please fill all fields.", "error");
+    }
+    
+    if (password !== confirmPassword) {
+      return showAlert("registerAlert", "Passwords do not match.", "error");
+    }
+    
+    if (password.length < 6) {
+      return showAlert("registerAlert", "Password must be at least 6 characters.", "error");
+    }
+    
+    // Check if user already exists
+    const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
+    if (existingUsers.some(user => user.username === username)) {
+      return showAlert("registerAlert", "Username already exists.", "error");
+    }
+    
+    // Save new user
+    existingUsers.push({ username, password });
+    localStorage.setItem("users", JSON.stringify(existingUsers));
+    localStorage.setItem("currentUser", JSON.stringify({ username }));
+    
+    showAlert("registerAlert", "Registration successful! Redirecting to login...", "success");
+    
+    // Clear form and switch to login after delay
+    setTimeout(() => {
+      document.getElementById("regUsername").value = "";
+      document.getElementById("regPassword").value = "";
+      document.getElementById("regConfirmPassword").value = "";
+      switchForm("login");
+    }, 2000);
+  }
+
+  // Login user
+  function login() {
+    const username = document.getElementById("loginUsername").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    
+    if (!username || !password) {
+      return showAlert("loginAlert", "Please enter username and password.", "error");
+    }
+    
+    const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
+    const user = existingUsers.find(user => user.username === username && user.password === password);
+    
+    if (user) {
+      localStorage.setItem("currentUser", JSON.stringify({ username }));
+      showAlert("loginAlert", "Login successful! Redirecting...", "success");
+      
+      // Redirect to voting page after delay
+      setTimeout(() => {
+        window.location.href = "vote.html";
+      }, 1500);
+    } else {
+      showAlert("loginAlert", "Invalid username or password.", "error");
+    }
+  }
+
+  // Allow form submission on Enter key
+  document.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+      if (document.getElementById("loginForm").classList.contains("active")) {
+        login();
+      } else {
+        register();
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
