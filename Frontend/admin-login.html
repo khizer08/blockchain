@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login / Register - Bytechain Voting System</title>
+  <title>Admin Login - Bytechain Voting System</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     :root {
@@ -98,6 +98,21 @@
       text-transform: uppercase;
       letter-spacing: 2px;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .admin-badge {
+      background: linear-gradient(135deg, var(--error-color), #a52a2a);
+      color: var(--text-light);
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 2rem;
+      text-align: center;
+      border: 2px solid #8b0000;
+      box-shadow: var(--shadow-light);
     }
 
     h2 {
@@ -207,55 +222,6 @@
       transform: translateY(-1px);
     }
 
-    .switch {
-      margin-top: 2rem;
-      text-align: center;
-      font-size: 1rem;
-      color: var(--text-muted);
-    }
-
-    .switch a {
-      color: var(--accent-color);
-      cursor: pointer;
-      text-decoration: none;
-      font-weight: 700;
-      transition: var(--transition);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 0.5rem 1rem;
-      border: 2px solid var(--accent-color);
-      border-radius: var(--border-radius);
-    }
-
-    .switch a:hover {
-      color: var(--text-light);
-      background: var(--accent-color);
-      box-shadow: var(--shadow-light);
-    }
-
-    .form {
-      display: none;
-      animation: fadeIn 0.5s ease;
-    }
-
-    .form.active {
-      display: block;
-    }
-
-    .password-toggle {
-      position: absolute;
-      right: 15px;
-      top: 45px;
-      color: var(--accent-color);
-      cursor: pointer;
-      transition: var(--transition);
-      font-size: 1.2rem;
-    }
-
-    .password-toggle:hover {
-      color: var(--success-color);
-    }
-
     .alert {
       padding: 1rem 1.5rem;
       border-radius: var(--border-radius);
@@ -302,6 +268,29 @@
       box-shadow: var(--shadow-light);
     }
 
+    .credentials-info {
+      background: rgba(45, 90, 61, 0.2);
+      border: 2px solid var(--accent-color);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .credentials-info h4 {
+      color: var(--text-light);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .credentials-info p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin: 0.3rem 0;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -327,69 +316,35 @@
     <h1>Bytechain Voting</h1>
   </div>
 
-  <div id="loginForm" class="form active">
-    <div id="loginAlert" class="alert"></div>
-    <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
-    
-    <div class="form-group">
-      <label for="loginUsername">Username</label>
-      <i class="fas fa-user input-icon"></i>
-      <input type="text" id="loginUsername" placeholder="Enter your username" required>
-    </div>
-    
-    <div class="form-group">
-      <label for="loginPassword">Password</label>
-      <i class="fas fa-lock input-icon"></i>
-      <input type="password" id="loginPassword" placeholder="Enter your password" required>
-      <i class="fas fa-eye password-toggle" onclick="togglePassword('loginPassword')"></i>
-    </div>
-    
-    <button onclick="login()">
-      <i class="fas fa-sign-in-alt"></i> Login
-    </button>
-    
-    <div class="switch">
-      Don't have an account? <a onclick="switchForm('register')">Register</a>
-    </div>
+  <div class="admin-badge">
+    <i class="fas fa-shield-alt"></i> Admin Access Required
   </div>
 
-  <div id="registerForm" class="form">
-    <div id="registerAlert" class="alert"></div>
-    <h2><i class="fas fa-user-plus"></i> Register</h2>
+  <div id="adminLoginForm">
+    <div id="adminAlert" class="alert"></div>
+    <h2><i class="fas fa-user-shield"></i> Admin Login</h2>
     
     <div class="form-group">
-      <label for="registerUsername">Username</label>
+      <label for="adminUsername">Admin Username</label>
       <i class="fas fa-user input-icon"></i>
-      <input type="text" id="registerUsername" placeholder="Choose a username" required>
+      <input type="text" id="adminUsername" placeholder="Enter admin username" required>
     </div>
     
     <div class="form-group">
-      <label for="registerEmail">Email</label>
-      <i class="fas fa-envelope input-icon"></i>
-      <input type="email" id="registerEmail" placeholder="Enter your email" required>
-    </div>
-    
-    <div class="form-group">
-      <label for="registerPassword">Password</label>
+      <label for="adminPassword">Admin Password</label>
       <i class="fas fa-lock input-icon"></i>
-      <input type="password" id="registerPassword" placeholder="Choose a password" required>
-      <i class="fas fa-eye password-toggle" onclick="togglePassword('registerPassword')"></i>
+      <input type="password" id="adminPassword" placeholder="Enter admin password" required>
     </div>
     
-    <div class="form-group">
-      <label for="confirmPassword">Confirm Password</label>
-      <i class="fas fa-lock input-icon"></i>
-      <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
-      <i class="fas fa-eye password-toggle" onclick="togglePassword('confirmPassword')"></i>
-    </div>
-    
-    <button onclick="register()">
-      <i class="fas fa-user-plus"></i> Register
+    <button onclick="adminLogin()">
+      <i class="fas fa-sign-in-alt"></i> Login as Admin
     </button>
-    
-    <div class="switch">
-      Already have an account? <a onclick="switchForm('login')">Login</a>
-    </div>
+  </div>
+
+  <div class="credentials-info">
+    <h4><i class="fas fa-info-circle"></i> Admin Credentials</h4>
+    <p><strong>Username:</strong> admin</p>
+    <p><strong>Password:</strong> admin123</p>
   </div>
 
   <div class="back-link">
@@ -399,8 +354,8 @@
 
 <script>
   // Show alert message
-  function showAlert(message, type, formType) {
-    const alertElement = document.getElementById(formType + "Alert");
+  function showAlert(message, type) {
+    const alertElement = document.getElementById("adminAlert");
     alertElement.textContent = message;
     alertElement.className = `alert alert-${type}`;
     alertElement.style.display = "block";
@@ -411,123 +366,47 @@
     }, 5000);
   }
 
-  // Switch between login and register forms
-  function switchForm(formType) {
-    const loginForm = document.getElementById("loginForm");
-    const registerForm = document.getElementById("registerForm");
-    
-    if (formType === "register") {
-      loginForm.classList.remove("active");
-      registerForm.classList.add("active");
-    } else {
-      registerForm.classList.remove("active");
-      loginForm.classList.add("active");
-    }
-  }
-
-  // Toggle password visibility
-  function togglePassword(inputId) {
-    const input = document.getElementById(inputId);
-    const toggle = input.nextElementSibling;
-    
-    if (input.type === "password") {
-      input.type = "text";
-      toggle.classList.remove("fa-eye");
-      toggle.classList.add("fa-eye-slash");
-    } else {
-      input.type = "password";
-      toggle.classList.remove("fa-eye-slash");
-      toggle.classList.add("fa-eye");
-    }
-  }
-
-  // Login function
-  function login() {
-    const username = document.getElementById("loginUsername").value.trim();
-    const password = document.getElementById("loginPassword").value;
+  // Admin login function
+  function adminLogin() {
+    const username = document.getElementById("adminUsername").value.trim();
+    const password = document.getElementById("adminPassword").value;
     
     if (!username || !password) {
-      return showAlert("Please enter username and password.", "error", "login");
+      return showAlert("Please enter username and password.", "error");
     }
     
-    // Simple validation (in a real app, this would be server-side)
-    if (username.length < 3) {
-      return showAlert("Username must be at least 3 characters long.", "error", "login");
+    // Check admin credentials
+    if (username === "admin" && password === "admin123") {
+      localStorage.setItem("adminLoggedIn", "true");
+      localStorage.setItem("adminUsername", username);
+      showAlert("Login successful! Redirecting to admin panel...", "success");
+      
+      // Redirect to admin panel after delay
+      setTimeout(() => {
+        window.location.href = "admin.html";
+      }, 1500);
+    } else {
+      showAlert("Invalid admin credentials. Please check username and password.", "error");
     }
-    
-    if (password.length < 6) {
-      return showAlert("Password must be at least 6 characters long.", "error", "login");
-    }
-    
-    // Simulate successful login
-    localStorage.setItem("userLoggedIn", "true");
-    localStorage.setItem("username", username);
-    showAlert("Login successful! Redirecting to voting page...", "success", "login");
-    
-    // Redirect to voting page after delay
-    setTimeout(() => {
-      window.location.href = "vote.html";
-    }, 1500);
-  }
-
-  // Register function
-  function register() {
-    const username = document.getElementById("registerUsername").value.trim();
-    const email = document.getElementById("registerEmail").value.trim();
-    const password = document.getElementById("registerPassword").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
-    
-    if (!username || !email || !password || !confirmPassword) {
-      return showAlert("Please fill in all fields.", "error", "register");
-    }
-    
-    if (username.length < 3) {
-      return showAlert("Username must be at least 3 characters long.", "error", "register");
-    }
-    
-    if (!email.includes("@")) {
-      return showAlert("Please enter a valid email address.", "error", "register");
-    }
-    
-    if (password.length < 6) {
-      return showAlert("Password must be at least 6 characters long.", "error", "register");
-    }
-    
-    if (password !== confirmPassword) {
-      return showAlert("Passwords do not match.", "error", "register");
-    }
-    
-    // Simulate successful registration
-    showAlert("Registration successful! Please login.", "success", "register");
-    
-    // Switch to login form after delay
-    setTimeout(() => {
-      switchForm("login");
-      document.getElementById("loginUsername").value = username;
-    }, 1500);
   }
 
   // Allow form submission on Enter key
   document.addEventListener("keypress", function(e) {
     if (e.key === "Enter") {
-      if (document.getElementById("loginForm").classList.contains("active")) {
-        login();
-      } else {
-        register();
-      }
+      adminLogin();
     }
   });
 
   // Check if already logged in
-  if (localStorage.getItem("userLoggedIn") === "true") {
-    window.location.href = "vote.html";
+  if (localStorage.getItem("adminLoggedIn") === "true") {
+    window.location.href = "admin.html";
   }
 
-  // Focus on first input field on page load
+  // Focus on username field on page load
   window.onload = function() {
-    document.getElementById("loginUsername").focus();
+    document.getElementById("adminUsername").focus();
   };
 </script>
 
 </body>
-</html>
+</html> 

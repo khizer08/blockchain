@@ -3,39 +3,511 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Online Voting System</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Admin Panel - Bytechain Voting System</title>
+  <link rel="stylesheet" href="Style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .admin-dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .admin-card {
+      background: rgba(13, 27, 13, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius-large);
+      padding: 2rem;
+      box-shadow: var(--shadow-medium);
+      border: 2px solid var(--accent-color);
+      transition: var(--transition);
+      text-align: center;
+    }
+    
+    .admin-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-heavy);
+      border-color: var(--success-color);
+    }
+    
+    .admin-card i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--accent-color);
+    }
+    
+    .admin-card h3 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .admin-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+    
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, var(--error-color), #a52a2a);
+      border-color: var(--error-color);
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      animation: pulse 2s infinite;
+    }
+    
+    .status-active {
+      background: var(--success-color);
+    }
+    
+    .status-inactive {
+      background: var(--error-color);
+    }
+    
+    .status-ended {
+      background: var(--text-muted);
+    }
+    
+    .election-status {
+      background: rgba(13, 27, 13, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius-large);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      box-shadow: var(--shadow-medium);
+      border: 2px solid var(--accent-color);
+    }
+    
+    .election-status h3 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .election-status p {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    
+    .election-timer {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--accent-color);
+      margin-top: 0.5rem;
+      padding: 1rem;
+      background: rgba(45, 90, 61, 0.2);
+      border-radius: var(--border-radius);
+      border: 2px solid var(--accent-color);
+    }
+    
+    .logout-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: linear-gradient(135deg, var(--error-color), #a52a2a);
+      color: var(--text-light);
+      padding: 0.75rem 1.5rem;
+      border: 2px solid var(--error-color);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+      transition: var(--transition);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: var(--shadow-light);
+    }
+    
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+      border-color: #a52a2a;
+    }
+    
+    .admin-info {
+      background: rgba(13, 27, 13, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-light);
+      border: 2px solid var(--accent-color);
+    }
+    
+    .admin-info h4 {
+      color: var(--accent-color);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .admin-info p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+    
+    .admin-username {
+      color: var(--text-light);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    
+    .admin-address {
+      color: var(--accent-color);
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    
+    .connection-status {
+      background: rgba(13, 27, 13, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      box-shadow: var(--shadow-light);
+      border: 2px solid var(--accent-color);
+    }
+    
+    .connection-status.connected {
+      border-color: var(--success-color);
+    }
+    
+    .connection-status.disconnected {
+      border-color: var(--error-color);
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>Admin Panel</h1>
+    <h1><i class="fas fa-shield-alt"></i> Admin Panel</h1>
     <nav>
-      <a href="index.html">Home</a>
-      <a href="result.html">Results</a>
-      <a href="admin.html">Admin</a>
+      <a href="index.html"><i class="fas fa-home"></i> Home</a>
+      <a href="result.html"><i class="fas fa-chart-bar"></i> Results</a>
+      <a href="admin.html" class="active"><i class="fas fa-cog"></i> Admin</a>
     </nav>
+    <button class="logout-btn" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
   </header>
 
   <main>
-    <section>
-      <h2>Election Controls</h2>
-      <a href="index2.html"><button id="startElectionBtn" class="btn">Start Election</a>
-</button>
-      <button id="endElectionBtn" class="btn">End Election</button>
-    </section>
+    <div class="admin-info">
+      <h4><i class="fas fa-user-shield"></i> Admin Dashboard</h4>
+      <p>Welcome, <span class="admin-username" id="adminUsername">Administrator</span>!</p>
+      <p class="admin-address" id="adminAddress">Connecting to wallet...</p>
+    </div>
 
-    <section>
-      <h2>Reset Votes</h2>
-      <button id="resetBtn" class="btn">Reset All Votes</button>
-    </section>
+    <div class="connection-status disconnected" id="connectionStatus">
+      <h4><i class="fas fa-wallet"></i> Wallet Connection</h4>
+      <p id="connectionText">Not connected to MetaMask</p>
+    </div>
 
-    <p id="adminMessage"></p>
+    <div class="election-status">
+      <h3><i class="fas fa-vote-yea"></i> Election Status</h3>
+      <p><span class="status-indicator status-inactive" id="statusIndicator"></span><span id="statusText">Election is currently inactive</span></p>
+      <div class="election-timer" id="electionTimer"></div>
+    </div>
+
+    <div class="admin-dashboard">
+      <div class="admin-card">
+        <i class="fas fa-play-circle"></i>
+        <h3>Election Controls</h3>
+        <p>Start and manage the voting process</p>
+        <div class="btn-group">
+          <button id="startElectionBtn" class="btn btn-success" onclick="startElection()">
+            <i class="fas fa-play"></i> Start Election
+          </button>
+          <button id="endElectionBtn" class="btn btn-warning" onclick="endElection()" disabled>
+            <i class="fas fa-stop"></i> End Election
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <i class="fas fa-redo-alt"></i>
+        <h3>Reset System</h3>
+        <p>Clear all votes and reset the system</p>
+        <div class="btn-group">
+          <button id="resetBtn" class="btn btn-danger" onclick="resetElection()">
+            <i class="fas fa-trash-alt"></i> Reset All Votes
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <i class="fas fa-chart-line"></i>
+        <h3>Statistics</h3>
+        <p>View real-time voting statistics</p>
+        <div class="btn-group">
+          <a href="result.html">
+            <button class="btn">
+              <i class="fas fa-eye"></i> View Results
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div id="adminMessage" style="margin-top: 2rem;"></div>
   </main>
 
   <footer>
-    <p>&copy; 2025 Online Voting System. All rights reserved.</p>
+    <p><i class="fas fa-copyright"></i> 2025 Bytechain Voting System. All rights reserved.</p>
   </footer>
 
-  <script src="script.js"></script>
+  <!-- Load Web3 and Contract -->
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+  <script src="./build/contracts/Voting.json"></script>
+  <script>
+    // Initialize global contract reference
+    window.contractAddress = "0x117F2ca105A9872fD9d756e8a6E2f620F853C725"; // Your contract address
+    window.contractABI = Voting.abi; // From Voting.json
+  </script>
+  <script src="Script.js"></script>
+  
+  <script>
+    // Check admin authentication
+    if (localStorage.getItem("adminLoggedIn") !== "true") {
+      window.location.href = "admin-login.html";
+    }
+
+    // Display admin username
+    const adminUsername = localStorage.getItem("adminUsername") || "Administrator";
+    document.getElementById("adminUsername").textContent = adminUsername;
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem("adminLoggedIn");
+      localStorage.removeItem("adminUsername");
+      window.location.href = "index.html";
+    }
+
+    // Global variables for admin functions
+    let web3;
+    let votingContract;
+    let accounts = [];
+    let isAdmin = false;
+
+    // Initialize admin functions
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initWeb3();
+      await initContract();
+      await checkAdminStatus();
+      await updateElectionStatus();
+      setInterval(updateElectionStatus, 5000); // Update every 5 seconds
+    });
+
+    // Initialize Web3
+    async function initWeb3() {
+      if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
+        try {
+          accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          console.log("Admin connected:", accounts[0]);
+          
+          // Update connection status
+          updateConnectionStatus(true, accounts[0]);
+          
+          return true;
+        } catch (error) {
+          console.error("Admin connection failed:", error);
+          updateConnectionStatus(false, "Connection failed");
+          showMessage("Failed to connect wallet. Please connect MetaMask.", "error");
+          return false;
+        }
+      } else {
+        updateConnectionStatus(false, "MetaMask not detected");
+        showMessage("MetaMask not detected. Please install MetaMask.", "error");
+        return false;
+      }
+    }
+
+    // Initialize contract
+    async function initContract() {
+      try {
+        const response = await fetch('./VotingABI.json');
+        const data = await response.json();
+        const abi = data.abi;
+        votingContract = new web3.eth.Contract(abi, window.contractAddress);
+        console.log("Admin contract initialized");
+      } catch (error) {
+        console.error("Contract init error:", error);
+        showMessage("Failed to initialize contract.", "error");
+      }
+    }
+
+    // Check if current user is admin
+    async function checkAdminStatus() {
+      try {
+        const contractAdmin = await votingContract.methods.admin().call();
+        isAdmin = (contractAdmin.toLowerCase() === accounts[0].toLowerCase());
+        
+        if (isAdmin) {
+          showMessage("You are the contract admin. You can start/end elections.", "success");
+        } else {
+          showMessage("You are not the contract admin. Only the contract deployer can manage elections.", "warning");
+          document.getElementById('startElectionBtn').disabled = true;
+          document.getElementById('endElectionBtn').disabled = true;
+        }
+      } catch (error) {
+        console.error("Admin check error:", error);
+        showMessage("Failed to check admin status.", "error");
+      }
+    }
+
+    // Update connection status
+    function updateConnectionStatus(connected, address) {
+      const statusDiv = document.getElementById('connectionStatus');
+      const statusText = document.getElementById('connectionText');
+      const addressDiv = document.getElementById('adminAddress');
+      
+      if (connected) {
+        statusDiv.className = 'connection-status connected';
+        statusText.innerHTML = '<i class="fas fa-check-circle"></i> Connected to MetaMask';
+        addressDiv.textContent = `Address: ${address.slice(0, 6)}...${address.slice(-4)}`;
+      } else {
+        statusDiv.className = 'connection-status disconnected';
+        statusText.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + address;
+        addressDiv.textContent = 'Not connected';
+      }
+    }
+
+    // Update election status
+    async function updateElectionStatus() {
+      try {
+        const status = await votingContract.methods.status().call();
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+        const startBtn = document.getElementById('startElectionBtn');
+        const endBtn = document.getElementById('endElectionBtn');
+        const timer = document.getElementById('electionTimer');
+
+        // Remove all status classes
+        statusIndicator.className = 'status-indicator';
+        
+        if (status == 0) { // NotStarted
+          statusIndicator.classList.add('status-inactive');
+          statusText.textContent = 'Election is currently inactive';
+          startBtn.disabled = !isAdmin;
+          endBtn.disabled = true;
+          timer.textContent = '';
+        } else if (status == 1) { // Started
+          statusIndicator.classList.add('status-active');
+          statusText.textContent = 'Election is currently active';
+          startBtn.disabled = true;
+          endBtn.disabled = !isAdmin;
+          
+          // Show time remaining
+          const timeLeft = await votingContract.methods.getElectionTimeLeft().call();
+          if (timeLeft > 0) {
+            const hours = Math.floor(timeLeft / 3600);
+            const minutes = Math.floor((timeLeft % 3600) / 60);
+            const seconds = timeLeft % 60;
+            timer.textContent = `Time remaining: ${hours}h ${minutes}m ${seconds}s`;
+          } else {
+            timer.textContent = 'Election time expired';
+          }
+        } else if (status == 2) { // Ended
+          statusIndicator.classList.add('status-ended');
+          statusText.textContent = 'Election has ended';
+          startBtn.disabled = true;
+          endBtn.disabled = true;
+          timer.textContent = 'Election completed';
+        }
+      } catch (error) {
+        console.error("Status update error:", error);
+      }
+    }
+
+    // Start election
+    async function startElection() {
+      if (!isAdmin) {
+        showMessage("Only the contract admin can start elections.", "error");
+        return;
+      }
+      
+      try {
+        showMessage("Starting election...", "info");
+        await votingContract.methods.startElection().send({ from: accounts[0] });
+        showMessage("Election started successfully! Voters can now login and vote.", "success");
+        await updateElectionStatus();
+      } catch (error) {
+        console.error("Start election error:", error);
+        showMessage("Failed to start election. Make sure you're the admin and have sufficient gas.", "error");
+      }
+    }
+
+    // End election
+    async function endElection() {
+      if (!isAdmin) {
+        showMessage("Only the contract admin can end elections.", "error");
+        return;
+      }
+      
+      try {
+        showMessage("Ending election...", "info");
+        await votingContract.methods.endElection().send({ from: accounts[0] });
+        showMessage("Election ended successfully!", "success");
+        await updateElectionStatus();
+      } catch (error) {
+        console.error("End election error:", error);
+        showMessage("Failed to end election. Make sure you're the admin and have sufficient gas.", "error");
+      }
+    }
+
+    // Reset election
+    async function resetElection() {
+      if (confirm("Are you sure you want to reset all votes? This action cannot be undone.")) {
+        try {
+          showMessage("Resetting election...", "info");
+          // Note: This would require a reset function in the smart contract
+          // For now, we'll just show a message
+          showMessage("Reset function not implemented in contract yet.", "warning");
+        } catch (error) {
+          console.error("Reset error:", error);
+          showMessage("Failed to reset election.", "error");
+        }
+      }
+    }
+
+    // Show message
+    function showMessage(message, type) {
+      const messageDiv = document.getElementById('adminMessage');
+      messageDiv.textContent = message;
+      messageDiv.className = `alert alert-${type}`;
+      messageDiv.style.display = 'block';
+      
+      setTimeout(() => {
+        messageDiv.style.display = 'none';
+      }, 5000);
+    }
+  </script>
 </body>
 </html>

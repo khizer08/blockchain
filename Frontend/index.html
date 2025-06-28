@@ -3,60 +3,199 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bytechain Vote</title>
-
-  <link href="https://fonts.googleapis.com/css?family=Raleway:700&display=swap" rel="stylesheet">
+  <title>Bytechain Voting System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <style>
+    :root {
+      --primary-color: #1a4d2e;
+      --secondary-color: #2d5a3d;
+      --accent-color: #4a7c59;
+      --success-color: #2d5a3d;
+      --error-color: #8b0000;
+      --text-light: #ffffff;
+      --text-muted: #cccccc;
+      --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.3);
+      --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.4);
+      --shadow-heavy: 0 15px 35px rgba(0, 0, 0, 0.5);
+      --border-radius: 8px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     body {
       margin: 0;
       padding: 0;
-      background: url('photo2.jpg') no-repeat center center fixed; 
-      background-size: cover;
-      font-family: 'Raleway', sans-serif;
+      background: linear-gradient(135deg, #0d1b0d 0%, #1a4d2e 50%, #2d5a3d 100%);
+      background-attachment: fixed;
+      font-family: 'Arial', sans-serif;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      color: rgb(255, 255, 255);
+      color: var(--text-light);
       text-align: center;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+      pointer-events: none;
+      z-index: -1;
     }
 
     .landing-container {
-      background: hsla(0, 0%, 0%, 0.29);
-      padding: 60px;
-      border-radius: 16px;
+      background: rgba(13, 27, 13, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 4rem;
+      border-radius: var(--border-radius);
+      border: 2px solid var(--accent-color);
+      box-shadow: var(--shadow-heavy);
       animation: fadeIn 2s ease-in-out;
+      max-width: 600px;
+      width: 90%;
+    }
+
+    .landing-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-color), var(--success-color), var(--accent-color));
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
     }
 
     h1 {
-      font-size: 60px;
-      margin-bottom: 20px;
-      cursor: pointer;
-      transition: transform 0.3s ease, color 0.3s ease;
+      font-family: 'Orbitron', monospace;
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+      animation: glow 2s ease-in-out infinite alternate;
     }
 
-    h1:hover {
-      transform: scale(1.1);
-      color: #f82249;
+    @keyframes glow {
+      from { filter: drop-shadow(0 0 5px rgba(74, 124, 89, 0.5)); }
+      to { filter: drop-shadow(0 0 20px rgba(74, 124, 89, 0.8)); }
     }
 
     p {
-      font-size: 20px;
-      color: #ccc;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-weight: 600;
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: var(--text-light);
+      padding: 1.2rem 2rem;
+      border: 2px solid var(--accent-color);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 700;
+      transition: var(--transition);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-light);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--accent-color);
+      transition: var(--transition);
+      z-index: -1;
+    }
+
+    .btn:hover::before {
+      left: 0;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-heavy);
+      color: var(--text-light);
+      border-color: var(--success-color);
+    }
+
+    .btn-voter {
+      background: linear-gradient(135deg, var(--success-color), var(--accent-color));
+      border-color: var(--success-color);
+    }
+
+    .btn-admin {
+      background: linear-gradient(135deg, var(--error-color), #a52a2a);
+      border-color: var(--error-color);
+    }
+
+    .btn-admin:hover {
+      border-color: var(--accent-color);
     }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-30px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    @media (max-width: 768px) {
+      .landing-container {
+        padding: 2rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .button-container {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
 
   <div class="landing-container">
-    <h1 onclick="location.href='admin.html'">Bytechain Vote</h1>
-    <p>Secure, Transparent, and Decentralized Voting</p>
+    <h1><i class="fas fa-vote-yea"></i> Bytechain Voting</h1>
+    <p>Secure, Transparent, and Decentralized Voting System</p>
+    
+    <div class="button-container">
+      <a href="login.html" class="btn btn-voter">
+        <i class="fas fa-user"></i> Voter Login
+      </a>
+      <a href="admin-login.html" class="btn btn-admin">
+        <i class="fas fa-shield-alt"></i> Admin Access
+      </a>
+      <a href="test-contract.html" class="btn" style="background: linear-gradient(135deg, #8b4513, #a0522d); border-color: #8b4513;">
+        <i class="fas fa-cog"></i> Test Contract
+      </a>
+    </div>
   </div>
 
 </body>

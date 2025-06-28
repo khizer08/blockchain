@@ -3,66 +3,365 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vote - Online Voting System</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Vote - Bytechain Voting System</title>
+  <link rel="stylesheet" href="Style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* Added styles for wallet connection */
-    .wallet-status {
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
+    .vote-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .wallet-section {
+      background: rgba(13, 27, 13, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius-large);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-medium);
+      border: 2px solid var(--accent-color);
       text-align: center;
-      font-weight: bold;
     }
+    
+    .wallet-section h3 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .wallet-status {
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      border-radius: var(--border-radius);
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: var(--transition);
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
     .connected {
-      background-color: #d4edda;
-      color: #155724;
+      background: rgba(45, 90, 61, 0.3);
+      color: var(--text-light);
+      border-color: var(--success-color);
+      box-shadow: var(--shadow-light);
     }
+    
     .disconnected {
-      background-color: #f8d7da;
-      color: #721c24;
+      background: rgba(139, 0, 0, 0.3);
+      color: var(--text-light);
+      border-color: var(--error-color);
+      box-shadow: var(--shadow-light);
     }
-    #connectWallet {
-      margin-bottom: 20px;
+    
+    .election-status-section {
+      background: rgba(13, 27, 13, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius-large);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-medium);
+      border: 2px solid var(--accent-color);
+      text-align: center;
+    }
+    
+    .election-status-section h3 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .election-status-indicator {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      animation: pulse 2s infinite;
+    }
+    
+    .election-active {
+      background: var(--success-color);
+    }
+    
+    .election-inactive {
+      background: var(--error-color);
+    }
+    
+    .election-ended {
+      background: var(--text-muted);
+    }
+    
+    .election-timer {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent-color);
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(45, 90, 61, 0.2);
+      border-radius: var(--border-radius);
+      border: 2px solid var(--accent-color);
+    }
+    
+    .candidates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .candidate-card {
+      background: rgba(13, 27, 13, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius-large);
+      padding: 2rem;
+      box-shadow: var(--shadow-medium);
+      border: 2px solid var(--accent-color);
+      transition: var(--transition);
+      cursor: pointer;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .candidate-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--accent-color);
+      transform: scaleX(0);
+      transition: var(--transition);
+    }
+    
+    .candidate-card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .candidate-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-heavy);
+      border-color: var(--success-color);
+    }
+    
+    .candidate-card.selected {
+      border-color: var(--success-color);
+      background: rgba(45, 90, 61, 0.2);
+      transform: translateY(-5px);
+    }
+    
+    .candidate-card.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    
+    .candidate-card input[type="radio"] {
+      display: none;
+    }
+    
+    .candidate-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--accent-color);
+    }
+    
+    .candidate-name {
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .candidate-description {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    
+    .vote-form {
+      background: rgba(13, 27, 13, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius-large);
+      padding: 2rem;
+      box-shadow: var(--shadow-medium);
+      border: 2px solid var(--accent-color);
+      text-align: center;
+      margin-top: 2rem;
+    }
+    
+    .vote-form h3 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .live-results {
+      background: rgba(13, 27, 13, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius-large);
+      padding: 2rem;
+      box-shadow: var(--shadow-medium);
+      border: 2px solid var(--accent-color);
+      margin-top: 2rem;
+    }
+    
+    .live-results h3 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: var(--accent-color);
+      transition: width 0.3s ease;
+    }
+    
+    .vote-message {
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      margin: 1rem 0;
+      font-weight: 700;
+      text-align: center;
+      transition: var(--transition);
+      border: 2px solid;
+    }
+    
+    .vote-message.success {
+      background: rgba(45, 90, 61, 0.2);
+      color: var(--text-light);
+      border-color: var(--success-color);
+    }
+    
+    .vote-message.error {
+      background: rgba(139, 0, 0, 0.2);
+      color: var(--text-light);
+      border-color: var(--error-color);
+    }
+    
+    .vote-message.info {
+      background: rgba(45, 90, 61, 0.2);
+      color: var(--text-light);
+      border-color: var(--accent-color);
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Vote for Your Favorite Candidate</h1>
+    <h1><i class="fas fa-vote-yea"></i> Cast Your Vote</h1>
     <nav>
-      <a href="index.html">Home</a>
-      <a href="vote.html">Vote</a>
-      <a href="result.html">Results</a>
+      <a href="index.html"><i class="fas fa-home"></i> Home</a>
+      <a href="vote.html" class="active"><i class="fas fa-vote-yea"></i> Vote</a>
+      <a href="result.html"><i class="fas fa-chart-bar"></i> Results</a>
     </nav>
   </header>
 
   <main>
-    <!-- Wallet Connection Section -->
-    <div id="walletSection">
-      <button id="connectWallet" class="btn">Connect MetaMask</button>
-      <div id="walletStatus" class="wallet-status disconnected">
-        Wallet not connected
+    <div class="vote-container">
+      <!-- Election Status Section -->
+      <div class="election-status-section">
+        <h3><i class="fas fa-clock"></i> Election Status</h3>
+        <p><span class="election-status-indicator election-inactive" id="electionStatusIndicator"></span><span id="electionStatusText">Election is currently inactive</span></p>
+        <div class="election-timer" id="electionTimer"></div>
       </div>
-    </div>
 
-    <form id="voteForm" style="display:none;"> <!-- Hidden until wallet connects -->
-      <label>Select Candidate:</label>
-      <div class="candidates">
-        <label><input type="radio" name="candidate" value="CONGRESS" required> CONGRESS</label>
-        <label><input type="radio" name="candidate" value="BJP"> BJP</label>
-        <label><input type="radio" name="candidate" value="JDS"> JDS</label>
+      <!-- Wallet Connection Section -->
+      <div class="wallet-section">
+        <h3><i class="fas fa-wallet"></i> Connect Your Wallet</h3>
+        <button id="connectWallet" class="btn">
+          <i class="fab fa-ethereum"></i> Connect MetaMask
+        </button>
+        <div id="walletStatus" class="wallet-status disconnected">
+          <i class="fas fa-exclamation-triangle"></i>
+          Wallet not connected
+        </div>
       </div>
-      <button type="submit" class="btn">Submit Vote</button>
-    </form>
-    <p id="voteMessage"></p>
-    
-    <!-- Live Results -->
-    <div class="results">
-      <h2>Live Results</h2>
-      <ul id="resultsList"></ul>
+
+      <form id="voteForm" class="vote-form" style="display:none;">
+        <h3><i class="fas fa-user-check"></i> Select Your Candidate</h3>
+        <div class="candidates-grid">
+          <div class="candidate-card" onclick="selectCandidate('CONGRESS')">
+            <input type="radio" name="candidate" value="CONGRESS" required>
+            <div class="candidate-icon">
+              <i class="fas fa-democrat"></i>
+            </div>
+            <div class="candidate-name">CONGRESS</div>
+            <div class="candidate-description">Indian National Congress Party</div>
+          </div>
+          
+          <div class="candidate-card" onclick="selectCandidate('BJP')">
+            <input type="radio" name="candidate" value="BJP">
+            <div class="candidate-icon">
+              <i class="fas fa-landmark"></i>
+            </div>
+            <div class="candidate-name">BJP</div>
+            <div class="candidate-description">Bharatiya Janata Party</div>
+          </div>
+          
+          <div class="candidate-card" onclick="selectCandidate('JDS')">
+            <input type="radio" name="candidate" value="JDS">
+            <div class="candidate-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="candidate-name">JDS</div>
+            <div class="candidate-description">Janata Dal (Secular)</div>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-success" id="submitVoteBtn" disabled>
+          <i class="fas fa-paper-plane"></i> Submit Vote
+        </button>
+      </form>
+      
+      <div id="voteMessage" class="vote-message" style="display:none;"></div>
+      
+      <!-- Live Results -->
+      <div class="live-results">
+        <h3><i class="fas fa-chart-line"></i> Live Results</h3>
+        <ul id="resultsList"></ul>
+      </div>
     </div>
   </main>
+
+  <footer>
+    <p><i class="fas fa-copyright"></i> 2025 Bytechain Voting System. All rights reserved.</p>
+  </footer>
 
   <!-- Load Web3 and Contract -->
   <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
@@ -71,7 +370,201 @@
     // Initialize global contract reference
     window.contractAddress = "0x117F2ca105A9872fD9d756e8a6E2f620F853C725"; // Your contract address
     window.contractABI = Voting.abi; // From Voting.json
+    
+    // Function to handle candidate selection
+    function selectCandidate(value) {
+      // Check if election is active
+      if (!window.electionActive) {
+        showVoteMessage("Election is not active. Please wait for admin to start the election.", "error");
+        return;
+      }
+      
+      // Remove selected class from all cards
+      document.querySelectorAll('.candidate-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      
+      // Add selected class to clicked card
+      event.currentTarget.classList.add('selected');
+      
+      // Set the radio button value
+      document.querySelector(`input[value="${value}"]`).checked = true;
+      
+      // Enable submit button
+      document.getElementById('submitVoteBtn').disabled = false;
+    }
+    
+    // Show vote message
+    function showVoteMessage(message, type) {
+      const messageDiv = document.getElementById('voteMessage');
+      messageDiv.textContent = message;
+      messageDiv.className = `vote-message ${type}`;
+      messageDiv.style.display = 'block';
+      
+      setTimeout(() => {
+        messageDiv.style.display = 'none';
+      }, 5000);
+    }
   </script>
-  <script src="script.js"></script>
+  <script src="Script.js"></script>
+  
+  <script>
+    // Global variables for vote page
+    let web3;
+    let votingContract;
+    let accounts = [];
+    window.electionActive = false;
+
+    // Initialize vote page
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initWeb3();
+      await initContract();
+      await updateElectionStatus();
+      setInterval(updateElectionStatus, 5000); // Update every 5 seconds
+    });
+
+    // Initialize Web3
+    async function initWeb3() {
+      if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
+        try {
+          accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          console.log("Voter connected:", accounts[0]);
+          
+          // Update wallet status
+          if (document.getElementById('walletStatus')) {
+            document.getElementById('walletStatus').className = 'wallet-status connected';
+            document.getElementById('walletStatus').innerHTML = `<i class="fas fa-check-circle"></i> Connected: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
+          }
+          
+          return true;
+        } catch (error) {
+          console.error("Voter connection failed:", error);
+          return false;
+        }
+      } else {
+        console.log("MetaMask not detected");
+        return false;
+      }
+    }
+
+    // Initialize contract
+    async function initContract() {
+      try {
+        const response = await fetch('./VotingABI.json');
+        const data = await response.json();
+        const abi = data.abi;
+        votingContract = new web3.eth.Contract(abi, window.contractAddress);
+        console.log("Voter contract initialized");
+      } catch (error) {
+        console.error("Contract init error:", error);
+      }
+    }
+
+    // Update election status
+    async function updateElectionStatus() {
+      try {
+        const status = await votingContract.methods.status().call();
+        const statusIndicator = document.getElementById('electionStatusIndicator');
+        const statusText = document.getElementById('electionStatusText');
+        const timer = document.getElementById('electionTimer');
+        const voteForm = document.getElementById('voteForm');
+        const candidateCards = document.querySelectorAll('.candidate-card');
+
+        // Remove all status classes
+        statusIndicator.className = 'election-status-indicator';
+        
+        if (status == 0) { // NotStarted
+          statusIndicator.classList.add('election-inactive');
+          statusText.textContent = 'Election is currently inactive';
+          timer.textContent = 'Waiting for admin to start the election';
+          window.electionActive = false;
+          voteForm.style.display = 'none';
+          showVoteMessage("Election has not started yet. Please wait for admin to start the election.", "info");
+        } else if (status == 1) { // Started
+          statusIndicator.classList.add('election-active');
+          statusText.textContent = 'Election is currently active';
+          window.electionActive = true;
+          voteForm.style.display = 'block';
+          
+          // Show time remaining
+          const timeLeft = await votingContract.methods.getElectionTimeLeft().call();
+          if (timeLeft > 0) {
+            const hours = Math.floor(timeLeft / 3600);
+            const minutes = Math.floor((timeLeft % 3600) / 60);
+            const seconds = timeLeft % 60;
+            timer.textContent = `Time remaining: ${hours}h ${minutes}m ${seconds}s`;
+            
+            // Check if user can vote
+            if (accounts.length > 0) {
+              const canVote = await votingContract.methods.canVote(accounts[0]).call();
+              if (!canVote) {
+                showVoteMessage("You have already voted or cannot vote at this time.", "error");
+                candidateCards.forEach(card => card.classList.add('disabled'));
+                document.getElementById('submitVoteBtn').disabled = true;
+              } else {
+                candidateCards.forEach(card => card.classList.remove('disabled'));
+                document.getElementById('submitVoteBtn').disabled = false;
+              }
+            }
+          } else {
+            timer.textContent = 'Election time expired';
+            window.electionActive = false;
+            voteForm.style.display = 'none';
+            showVoteMessage("Election time has expired.", "error");
+          }
+        } else if (status == 2) { // Ended
+          statusIndicator.classList.add('election-ended');
+          statusText.textContent = 'Election has ended';
+          timer.textContent = 'Election completed';
+          window.electionActive = false;
+          voteForm.style.display = 'none';
+          showVoteMessage("Election has ended. View results on the results page.", "info");
+        }
+      } catch (error) {
+        console.error("Status update error:", error);
+      }
+    }
+
+    // Override the original handleVote function
+    window.handleVote = async function(e) {
+      e.preventDefault();
+      
+      if (!window.electionActive) {
+        showVoteMessage("Election is not active. Please wait for admin to start the election.", "error");
+        return;
+      }
+      
+      const selectedCandidate = document.querySelector('input[name="candidate"]:checked')?.value;
+
+      if (!selectedCandidate) {
+        showVoteMessage('Please select a candidate!', "error");
+        return;
+      }
+
+      try {
+        const candidateId = ['CONGRESS', 'BJP', 'JDS'].indexOf(selectedCandidate) + 1;
+        showVoteMessage('Submitting vote...', "info");
+
+        await votingContract.methods.vote(candidateId).send({ from: accounts[0] });
+        showVoteMessage('Vote submitted successfully!', "success");
+
+        // Disable voting after successful vote
+        document.querySelectorAll('.candidate-card').forEach(card => card.classList.add('disabled'));
+        document.getElementById('submitVoteBtn').disabled = true;
+
+        // Update results
+        await updateResults();
+      } catch (error) {
+        console.error("Voting error:", error);
+        showVoteMessage(`Error: ${error.message}`, "error");
+      }
+    };
+
+    // Connect wallet button
+    if (document.getElementById('connectWallet')) {
+      document.getElementById('connectWallet').addEventListener('click', initWeb3);
+    }
+  </script>
 </body>
 </html>

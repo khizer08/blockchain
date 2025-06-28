@@ -100,7 +100,7 @@ async function handleVote(e) {
     await updateResults();
   } catch (error) {
     console.error("Voting error:", error);
-    document.getElementById('voteMessage').textContent = `Error: ${error.message}`;
+    // document.getElementById('voteMessage').textContent = `Error: ${error.message}`;
   }
 }
 

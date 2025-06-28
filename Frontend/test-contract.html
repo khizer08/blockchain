@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contract Test - Bytechain Voting System</title>
+  <link rel="stylesheet" href="Style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .test-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .test-section {
+      background: rgba(13, 27, 13, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius-large);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-medium);
+      border: 2px solid var(--accent-color);
+    }
+    
+    .test-section h3 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .test-result {
+      background: rgba(13, 27, 13, 0.8);
+      border: 2px solid var(--accent-color);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      margin: 1rem 0;
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      word-break: break-all;
+    }
+    
+    .test-result.success {
+      border-color: var(--success-color);
+      background: rgba(45, 90, 61, 0.2);
+    }
+    
+    .test-result.error {
+      border-color: var(--error-color);
+      background: rgba(139, 0, 0, 0.2);
+    }
+    
+    .test-result.warning {
+      border-color: var(--warning-color);
+      background: rgba(139, 69, 19, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><i class="fas fa-cog"></i> Contract Test Panel</h1>
+    <nav>
+      <a href="index.html"><i class="fas fa-home"></i> Home</a>
+      <a href="admin-login.html"><i class="fas fa-shield-alt"></i> Admin Login</a>
+      <a href="login.html"><i class="fas fa-user"></i> Voter Login</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="test-container">
+      <div class="test-section">
+        <h3><i class="fas fa-wallet"></i> Wallet Connection Test</h3>
+        <button class="btn" onclick="testWalletConnection()">
+          <i class="fas fa-plug"></i> Test Wallet Connection
+        </button>
+        <div id="walletResult" class="test-result"></div>
+      </div>
+
+      <div class="test-section">
+        <h3><i class="fas fa-file-contract"></i> Contract Connection Test</h3>
+        <button class="btn" onclick="testContractConnection()">
+          <i class="fas fa-link"></i> Test Contract Connection
+        </button>
+        <div id="contractResult" class="test-result"></div>
+      </div>
+
+      <div class="test-section">
+        <h3><i class="fas fa-user-shield"></i> Admin Status Test</h3>
+        <button class="btn" onclick="testAdminStatus()">
+          <i class="fas fa-check-circle"></i> Check Admin Status
+        </button>
+        <div id="adminResult" class="test-result"></div>
+      </div>
+
+      <div class="test-section">
+        <h3><i class="fas fa-vote-yea"></i> Election Status Test</h3>
+        <button class="btn" onclick="testElectionStatus()">
+          <i class="fas fa-clock"></i> Check Election Status
+        </button>
+        <div id="electionResult" class="test-result"></div>
+      </div>
+
+      <div class="test-section">
+        <h3><i class="fas fa-play-circle"></i> Start Election Test</h3>
+        <button class="btn btn-success" onclick="testStartElection()">
+          <i class="fas fa-play"></i> Start Election (Admin Only)
+        </button>
+        <div id="startResult" class="test-result"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p><i class="fas fa-copyright"></i> 2025 Bytechain Voting System. All rights reserved.</p>
+  </footer>
+
+  <!-- Load Web3 and Contract -->
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+  <script src="./build/contracts/Voting.json"></script>
+  <script>
+    // Initialize global contract reference
+    window.contractAddress = "0x117F2ca105A9872fD9d756e8a6E2f620F853C725"; // Your contract address
+    window.contractABI = Voting.abi; // From Voting.json
+  </script>
+  
+  <script>
+    let web3;
+    let votingContract;
+    let accounts = [];
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initWeb3();
+      await initContract();
+    });
+
+    // Initialize Web3
+    async function initWeb3() {
+      if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
+        try {
+          accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          console.log("Connected:", accounts[0]);
+          return true;
+        } catch (error) {
+          console.error("Connection failed:", error);
+          return false;
+        }
+      } else {
+        console.log("MetaMask not detected");
+        return false;
+      }
+    }
+
+    // Initialize contract
+    async function initContract() {
+      try {
+        const response = await fetch('./VotingABI.json');
+        const data = await response.json();
+        const abi = data.abi;
+        votingContract = new web3.eth.Contract(abi, window.contractAddress);
+        console.log("Contract initialized");
+      } catch (error) {
+        console.error("Contract init error:", error);
+      }
+    }
+
+    // Test wallet connection
+    async function testWalletConnection() {
+      const resultDiv = document.getElementById('walletResult');
+      
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+          resultDiv.className = 'test-result success';
+          resultDiv.innerHTML = `
+            <strong>✅ Wallet Connected Successfully</strong><br>
+            Address: ${accounts[0]}<br>
+            Network: ${await web3.eth.net.getNetworkType()}
+          `;
+        } catch (error) {
+          resultDiv.className = 'test-result error';
+          resultDiv.innerHTML = `<strong>❌ Wallet Connection Failed</strong><br>Error: ${error.message}`;
+        }
+      } else {
+        resultDiv.className = 'test-result error';
+        resultDiv.innerHTML = '<strong>❌ MetaMask Not Detected</strong><br>Please install MetaMask extension.';
+      }
+    }
+
+    // Test contract connection
+    async function testContractConnection() {
+      const resultDiv = document.getElementById('contractResult');
+      
+      try {
+        if (!votingContract) {
+          throw new Error('Contract not initialized');
+        }
+        
+        // Test a simple call
+        const candidatesCount = await votingContract.methods.candidatesCount().call();
+        resultDiv.className = 'test-result success';
+        resultDiv.innerHTML = `
+          <strong>✅ Contract Connected Successfully</strong><br>
+          Contract Address: ${window.contractAddress}<br>
+          Candidates Count: ${candidatesCount}
+        `;
+      } catch (error) {
+        resultDiv.className = 'test-result error';
+        resultDiv.innerHTML = `<strong>❌ Contract Connection Failed</strong><br>Error: ${error.message}`;
+      }
+    }
+
+    // Test admin status
+    async function testAdminStatus() {
+      const resultDiv = document.getElementById('adminResult');
+      
+      try {
+        const contractAdmin = await votingContract.methods.admin().call();
+        const isAdmin = (contractAdmin.toLowerCase() === accounts[0].toLowerCase());
+        
+        if (isAdmin) {
+          resultDiv.className = 'test-result success';
+          resultDiv.innerHTML = `
+            <strong>✅ You are the Contract Admin</strong><br>
+            Contract Admin: ${contractAdmin}<br>
+            Your Address: ${accounts[0]}<br>
+            You can start/end elections!
+          `;
+        } else {
+          resultDiv.className = 'test-result warning';
+          resultDiv.innerHTML = `
+            <strong>⚠️ You are NOT the Contract Admin</strong><br>
+            Contract Admin: ${contractAdmin}<br>
+            Your Address: ${accounts[0]}<br>
+            Only the contract deployer can manage elections.
+          `;
+        }
+      } catch (error) {
+        resultDiv.className = 'test-result error';
+        resultDiv.innerHTML = `<strong>❌ Admin Check Failed</strong><br>Error: ${error.message}`;
+      }
+    }
+
+    // Test election status
+    async function testElectionStatus() {
+      const resultDiv = document.getElementById('electionResult');
+      
+      try {
+        const status = await votingContract.methods.status().call();
+        const statusNames = ['Not Started', 'Started', 'Ended'];
+        
+        resultDiv.className = 'test-result success';
+        resultDiv.innerHTML = `
+          <strong>📊 Election Status</strong><br>
+          Status: ${statusNames[status]} (${status})<br>
+        `;
+        
+        if (status == 1) { // Started
+          const timeLeft = await votingContract.methods.getElectionTimeLeft().call();
+          const hours = Math.floor(timeLeft / 3600);
+          const minutes = Math.floor((timeLeft % 3600) / 60);
+          const seconds = timeLeft % 60;
+          resultDiv.innerHTML += `Time Remaining: ${hours}h ${minutes}m ${seconds}s<br>`;
+        }
+        
+        // Show candidates
+        const candidatesCount = await votingContract.methods.candidatesCount().call();
+        resultDiv.innerHTML += `Candidates: ${candidatesCount}`;
+        
+      } catch (error) {
+        resultDiv.className = 'test-result error';
+        resultDiv.innerHTML = `<strong>❌ Election Status Check Failed</strong><br>Error: ${error.message}`;
+      }
+    }
+
+    // Test start election
+    async function testStartElection() {
+      const resultDiv = document.getElementById('startResult');
+      
+      try {
+        // Check if user is admin
+        const contractAdmin = await votingContract.methods.admin().call();
+        const isAdmin = (contractAdmin.toLowerCase() === accounts[0].toLowerCase());
+        
+        if (!isAdmin) {
+          resultDiv.className = 'test-result error';
+          resultDiv.innerHTML = '<strong>❌ Access Denied</strong><br>Only the contract admin can start elections.';
+          return;
+        }
+        
+        // Check current status
+        const status = await votingContract.methods.status().call();
+        if (status != 0) {
+          resultDiv.className = 'test-result warning';
+          resultDiv.innerHTML = '<strong>⚠️ Election Already Started/Ended</strong><br>Cannot start election in current state.';
+          return;
+        }
+        
+        resultDiv.className = 'test-result success';
+        resultDiv.innerHTML = '<strong>✅ Ready to Start Election</strong><br>Click the button in the admin panel to start the election.';
+        
+      } catch (error) {
+        resultDiv.className = 'test-result error';
+        resultDiv.innerHTML = `<strong>❌ Start Election Test Failed</strong><br>Error: ${error.message}`;
+      }
+    }
+  </script>
+</body>
+</html> 
